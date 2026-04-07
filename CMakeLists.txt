@@ -6,8 +6,8 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
 endif()
 
 # The upstream tests target newer controller_interface APIs than some Humble installations.
-# Keep runtime library buildable by default; tests can be enabled explicitly when needed.
-option(FORWARD_COMMAND_CONTROLLER_BUILD_TESTS "Build forward_command_controller tests" OFF)
+# Force tests off for this traced fork so runtime builds are not blocked on test API drift.
+set(FORWARD_COMMAND_CONTROLLER_BUILD_TESTS OFF CACHE BOOL "Build forward_command_controller tests" FORCE)
 
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   controller_interface
