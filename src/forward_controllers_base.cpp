@@ -15,6 +15,7 @@
 #include "forward_command_controller/forward_controllers_base.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <limits>
 #include <memory>
 #include <string>
@@ -27,6 +28,8 @@
 
 namespace
 {  // utility
+constexpr const char * kTraceEventsTopic = "/trace/events";
+constexpr const char * kTraceSource = "forward_command_controller";
 
 // called from RT control loop
 void reset_controller_reference_msg(forward_command_controller::CmdType & msg)
@@ -44,8 +47,10 @@ namespace forward_command_controller
 ForwardControllersBase::ForwardControllersBase()
 : controller_interface::ControllerInterface(),
   last_trace_id_(0),
+  last_applied_trace_id_(0),
   joints_command_subscriber_(nullptr),
-  traced_joints_command_subscriber_(nullptr)
+  traced_joints_command_subscriber_(nullptr),
+  trace_event_publisher_(nullptr)
 {
 }
 
@@ -89,6 +94,7 @@ controller_interface::CallbackReturn ForwardControllersBase::on_configure(
         return;
       }
       rt_command_.set(*msg);
+      rt_trace_id_.set(0);
     });
 
   traced_joints_command_subscriber_ = get_node()->create_subscription<TraceCmdType>(
@@ -110,7 +116,11 @@ controller_interface::CallbackReturn ForwardControllersBase::on_configure(
       cmd_msg.data = cmd_values;
       rt_command_.set(cmd_msg);
       rt_trace_id_.set(msg->trace_id);
+      publish_trace_event(msg->trace_id, "command_received");
     });
+
+  trace_event_publisher_ = get_node()->create_publisher<TraceEventType>(
+    kTraceEventsTopic, rclcpp::SystemDefaultsQoS());
 
   RCLCPP_INFO(
     get_node()->get_logger(),
@@ -161,6 +171,7 @@ controller_interface::CallbackReturn ForwardControllersBase::on_activate(
   rt_command_.try_set(joint_commands_);
   rt_trace_id_.try_set(0);
   last_trace_id_ = 0;
+  last_applied_trace_id_ = 0;
 
   RCLCPP_INFO(get_node()->get_logger(), "activate successful");
   return controller_interface::CallbackReturn::SUCCESS;
@@ -174,6 +185,7 @@ controller_interface::CallbackReturn ForwardControllersBase::on_deactivate(
   rt_command_.try_set(joint_commands_);
   rt_trace_id_.try_set(0);
   last_trace_id_ = 0;
+  last_applied_trace_id_ = 0;
 
   return controller_interface::CallbackReturn::SUCCESS;
 }
@@ -221,6 +233,29 @@ controller_interface::return_type ForwardControllersBase::update(
     }
   }
 
+  if (last_trace_id_ != 0 && last_trace_id_ != last_applied_trace_id_)
+  {
+    publish_trace_event(last_trace_id_, "command_applied");
+    last_applied_trace_id_ = last_trace_id_;
+  }
+
   return controller_interface::return_type::OK;
+}
+
+void ForwardControllersBase::publish_trace_event(uint64_t trace_id, const std::string & stage)
+{
+  if (!trace_event_publisher_ || trace_id == 0)
+  {
+    return;
+  }
+
+  TraceEventType msg;
+  const auto now_ns = get_node()->get_clock()->now().nanoseconds();
+  msg.stamp.sec = static_cast<int32_t>(now_ns / 1000000000LL);
+  msg.stamp.nanosec = static_cast<uint32_t>(now_ns % 1000000000LL);
+  msg.trace_id = trace_id;
+  msg.stage = stage;
+  msg.source = kTraceSource;
+  trace_event_publisher_->publish(msg);
 }
 }  // namespace forward_command_controller

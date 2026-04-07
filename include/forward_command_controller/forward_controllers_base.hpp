@@ -21,7 +21,9 @@
 #include <vector>
 
 #include "controller_interface/controller_interface.hpp"
+#include "marvin_trace_msgs/msg/trace_event.hpp"
 #include "marvin_trace_msgs/msg/traced_float64_multi_array.hpp"
+#include "rclcpp/publisher.hpp"
 #include "rclcpp/subscription.hpp"
 #include "rclcpp_lifecycle/state.hpp"
 #include "realtime_tools/realtime_thread_safe_box.hpp"
@@ -31,6 +33,7 @@ namespace forward_command_controller
 {
 using CmdType = std_msgs::msg::Float64MultiArray;
 using TraceCmdType = marvin_trace_msgs::msg::TracedFloat64MultiArray;
+using TraceEventType = marvin_trace_msgs::msg::TraceEvent;
 
 /**
  * \brief Forward command controller for a set of joints and interfaces.
@@ -98,9 +101,13 @@ protected:
   // save the last reference in case of unable to get value from box
   CmdType joint_commands_;
   uint64_t last_trace_id_;
+  uint64_t last_applied_trace_id_;
 
   rclcpp::Subscription<CmdType>::SharedPtr joints_command_subscriber_;
   rclcpp::Subscription<TraceCmdType>::SharedPtr traced_joints_command_subscriber_;
+  rclcpp::Publisher<TraceEventType>::SharedPtr trace_event_publisher_;
+
+  void publish_trace_event(uint64_t trace_id, const std::string & stage);
 };
 
 }  // namespace forward_command_controller
