@@ -26,7 +26,13 @@
 #include "rclcpp/publisher.hpp"
 #include "rclcpp/subscription.hpp"
 #include "rclcpp_lifecycle/state.hpp"
+#if __has_include(<realtime_tools/realtime_buffer.hpp>)
 #include "realtime_tools/realtime_buffer.hpp"
+#elif __has_include(<realtime_tools/realtime_buffer.h>)
+#include "realtime_tools/realtime_buffer.h"
+#else
+#error "Missing realtime_tools realtime_buffer header"
+#endif
 #include "std_msgs/msg/float64_multi_array.hpp"
 
 namespace forward_command_controller
