@@ -5,6 +5,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
   add_compile_options(-Wall -Wextra -Wpedantic -Wconversion)
 endif()
 
+# The upstream tests target newer controller_interface APIs than some Humble installations.
+# Keep runtime library buildable by default; tests can be enabled explicitly when needed.
+option(FORWARD_COMMAND_CONTROLLER_BUILD_TESTS "Build forward_command_controller tests" OFF)
+
 set(THIS_PACKAGE_INCLUDE_DEPENDS
   controller_interface
   generate_parameter_library
@@ -52,7 +56,7 @@ ament_target_dependencies(forward_command_controller PUBLIC ${THIS_PACKAGE_INCLU
 target_compile_definitions(forward_command_controller PRIVATE "FORWARD_COMMAND_CONTROLLER_BUILDING_DLL")
 pluginlib_export_plugin_description_file(controller_interface forward_command_plugin.xml)
 
-if(BUILD_TESTING)
+if(BUILD_TESTING AND FORWARD_COMMAND_CONTROLLER_BUILD_TESTS)
   find_package(ament_cmake_gmock REQUIRED)
   find_package(controller_manager REQUIRED)
   find_package(ros2_control_test_assets REQUIRED)
