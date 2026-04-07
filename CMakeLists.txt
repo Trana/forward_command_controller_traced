@@ -40,6 +40,8 @@ add_library(forward_command_controller SHARED
 target_compile_features(forward_command_controller PUBLIC cxx_std_17)
 target_include_directories(forward_command_controller PUBLIC
   $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
   $<INSTALL_INTERFACE:include/forward_command_controller>
 )
 target_link_libraries(forward_command_controller PUBLIC

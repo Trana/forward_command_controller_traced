@@ -18,6 +18,7 @@
 #include <cmath>
 #include <memory>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 #include "controller_interface/helpers.hpp"
@@ -29,6 +30,21 @@ namespace
 {  // utility
 constexpr const char * kTraceEventsTopic = "/trace/events";
 constexpr const char * kTraceSource = "forward_command_controller";
+
+template <typename InterfaceT>
+bool set_interface_value_compat(InterfaceT & interface, double value)
+{
+  using RetT = decltype(interface.set_value(value));
+  if constexpr (std::is_same<RetT, bool>::value)
+  {
+    return interface.set_value(value);
+  }
+  else
+  {
+    interface.set_value(value);
+    return true;
+  }
+}
 
 }  // namespace
 
@@ -205,7 +221,7 @@ controller_interface::return_type ForwardControllersBase::update(
 
   for (auto index = 0ul; index < command_interfaces_.size(); ++index)
   {
-    if (!command_interfaces_[index].set_value((*joint_commands)->data[index]))
+    if (!set_interface_value_compat(command_interfaces_[index], (*joint_commands)->data[index]))
     {
       RCLCPP_WARN(
         get_node()->get_logger(), "Unable to set the command interface value %s: value = %f",

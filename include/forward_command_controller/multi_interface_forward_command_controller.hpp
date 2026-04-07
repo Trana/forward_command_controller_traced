@@ -18,7 +18,13 @@
 #include <memory>
 
 #include "forward_command_controller/forward_controllers_base.hpp"
+#if __has_include(<forward_command_controller/multi_interface_forward_command_controller_parameters.hpp>)
 #include "forward_command_controller/multi_interface_forward_command_controller_parameters.hpp"
+#elif __has_include(<multi_interface_forward_command_controller_parameters.hpp>)
+#include "multi_interface_forward_command_controller_parameters.hpp"
+#else
+#error "Missing multi_interface_forward_command_controller parameter header"
+#endif
 
 namespace forward_command_controller
 {
