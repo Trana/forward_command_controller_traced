@@ -16,7 +16,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <limits>
 #include <memory>
 #include <string>
 #include <vector>
@@ -31,21 +30,14 @@ namespace
 constexpr const char * kTraceEventsTopic = "/trace/events";
 constexpr const char * kTraceSource = "forward_command_controller";
 
-// called from RT control loop
-void reset_controller_reference_msg(forward_command_controller::CmdType & msg)
-{
-  for (auto & data : msg.data)
-  {
-    data = std::numeric_limits<double>::quiet_NaN();
-  }
-}
-
 }  // namespace
 
 namespace forward_command_controller
 {
 ForwardControllersBase::ForwardControllersBase()
 : controller_interface::ControllerInterface(),
+  rt_command_ptr_(nullptr),
+  rt_trace_id_(0),
   last_trace_id_(0),
   last_applied_trace_id_(0),
   joints_command_subscriber_(nullptr),
@@ -93,8 +85,8 @@ controller_interface::CallbackReturn ForwardControllersBase::on_configure(
           "Non-finite value received. Dropping message");
         return;
       }
-      rt_command_.set(*msg);
-      rt_trace_id_.set(0);
+      rt_command_ptr_.writeFromNonRT(msg);
+      rt_trace_id_.writeFromNonRT(0);
     });
 
   traced_joints_command_subscriber_ = get_node()->create_subscription<TraceCmdType>(
@@ -112,10 +104,10 @@ controller_interface::CallbackReturn ForwardControllersBase::on_configure(
         return;
       }
 
-      CmdType cmd_msg;
-      cmd_msg.data = cmd_values;
-      rt_command_.set(cmd_msg);
-      rt_trace_id_.set(msg->trace_id);
+      auto cmd_msg = std::make_shared<CmdType>();
+      cmd_msg->data = cmd_values;
+      rt_command_ptr_.writeFromNonRT(cmd_msg);
+      rt_trace_id_.writeFromNonRT(msg->trace_id);
       publish_trace_event(msg->trace_id, "command_received");
     });
 
@@ -164,12 +156,9 @@ controller_interface::CallbackReturn ForwardControllersBase::on_activate(
     return controller_interface::CallbackReturn::ERROR;
   }
 
-  // reset command buffer if a command came through callback when controller was inactive
-  // Try to set default value in command.
-  // If this fails, then another command will be received soon anyways.
-  reset_controller_reference_msg(joint_commands_);
-  rt_command_.try_set(joint_commands_);
-  rt_trace_id_.try_set(0);
+  // Reset buffers in case a command arrived while inactive.
+  rt_command_ptr_ = realtime_tools::RealtimeBuffer<std::shared_ptr<CmdType>>(nullptr);
+  rt_trace_id_.writeFromNonRT(0);
   last_trace_id_ = 0;
   last_applied_trace_id_ = 0;
 
@@ -180,10 +169,8 @@ controller_interface::CallbackReturn ForwardControllersBase::on_activate(
 controller_interface::CallbackReturn ForwardControllersBase::on_deactivate(
   const rclcpp_lifecycle::State & /*previous_state*/)
 {
-  // Try to set default value in command.
-  reset_controller_reference_msg(joint_commands_);
-  rt_command_.try_set(joint_commands_);
-  rt_trace_id_.try_set(0);
+  rt_command_ptr_ = realtime_tools::RealtimeBuffer<std::shared_ptr<CmdType>>(nullptr);
+  rt_trace_id_.writeFromNonRT(0);
   last_trace_id_ = 0;
   last_applied_trace_id_ = 0;
 
@@ -193,42 +180,36 @@ controller_interface::CallbackReturn ForwardControllersBase::on_deactivate(
 controller_interface::return_type ForwardControllersBase::update(
   const rclcpp::Time & /*time*/, const rclcpp::Duration & /*period*/)
 {
-  auto joint_commands_op = rt_command_.try_get();
-  if (joint_commands_op.has_value())
+  auto trace_id_ptr = rt_trace_id_.readFromRT();
+  if (trace_id_ptr)
   {
-    joint_commands_ = joint_commands_op.value();
-  }
-  auto trace_id_op = rt_trace_id_.try_get();
-  if (trace_id_op.has_value())
-  {
-    last_trace_id_ = trace_id_op.value();
+    last_trace_id_ = *trace_id_ptr;
   }
 
+  auto joint_commands = rt_command_ptr_.readFromRT();
+
   // no command received yet
-  if (
-    std::all_of(
-      joint_commands_.data.cbegin(), joint_commands_.data.cend(),
-      [](const auto & value) { return std::isnan(value); }))
+  if (!joint_commands || !(*joint_commands))
   {
     return controller_interface::return_type::OK;
   }
 
-  if (joint_commands_.data.size() != command_interfaces_.size())
+  if ((*joint_commands)->data.size() != command_interfaces_.size())
   {
     RCLCPP_ERROR_THROTTLE(
       get_node()->get_logger(), *(get_node()->get_clock()), 1000,
-      "command size (%zu) does not match number of interfaces (%zu)", joint_commands_.data.size(),
-      command_interfaces_.size());
+      "command size (%zu) does not match number of interfaces (%zu)",
+      (*joint_commands)->data.size(), command_interfaces_.size());
     return controller_interface::return_type::ERROR;
   }
 
   for (auto index = 0ul; index < command_interfaces_.size(); ++index)
   {
-    if (!command_interfaces_[index].set_value(joint_commands_.data[index]))
+    if (!command_interfaces_[index].set_value((*joint_commands)->data[index]))
     {
       RCLCPP_WARN(
         get_node()->get_logger(), "Unable to set the command interface value %s: value = %f",
-        command_interfaces_[index].get_name().c_str(), joint_commands_.data[index]);
+        command_interfaces_[index].get_name().c_str(), (*joint_commands)->data[index]);
       return controller_interface::return_type::OK;
     }
   }
