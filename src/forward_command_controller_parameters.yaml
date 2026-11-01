@@ -1,4 +1,4 @@
-forward_command_controller:
+forward_command_controller_traced:
   joints: {
     type: string_array,
     default_value: [],

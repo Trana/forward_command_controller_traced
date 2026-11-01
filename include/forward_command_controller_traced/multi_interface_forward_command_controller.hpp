@@ -12,21 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FORWARD_COMMAND_CONTROLLER__MULTI_INTERFACE_FORWARD_COMMAND_CONTROLLER_HPP_
-#define FORWARD_COMMAND_CONTROLLER__MULTI_INTERFACE_FORWARD_COMMAND_CONTROLLER_HPP_
+#ifndef FORWARD_COMMAND_CONTROLLER_TRACED__MULTI_INTERFACE_FORWARD_COMMAND_CONTROLLER_HPP_
+#define FORWARD_COMMAND_CONTROLLER_TRACED__MULTI_INTERFACE_FORWARD_COMMAND_CONTROLLER_HPP_
 
 #include <memory>
 
-#include "forward_command_controller/forward_controllers_base.hpp"
-#if __has_include(<forward_command_controller/multi_interface_forward_command_controller_parameters.hpp>)
-#include "forward_command_controller/multi_interface_forward_command_controller_parameters.hpp"
-#elif __has_include(<multi_interface_forward_command_controller_parameters.hpp>)
-#include "multi_interface_forward_command_controller_parameters.hpp"
+#include "forward_command_controller_traced/forward_controllers_base.hpp"
+#if __has_include(<forward_command_controller_traced/multi_interface_forward_command_controller_traced_parameters.hpp>)
+#include "forward_command_controller_traced/multi_interface_forward_command_controller_traced_parameters.hpp"
+#elif __has_include(<multi_interface_forward_command_controller_traced_parameters.hpp>)
+#include "multi_interface_forward_command_controller_traced_parameters.hpp"
 #else
 #error "Missing multi_interface_forward_command_controller parameter header"
 #endif
 
-namespace forward_command_controller
+namespace forward_command_controller_traced
 {
 /**
  * \brief Multi interface forward command controller for a set of interfaces.
@@ -40,7 +40,7 @@ namespace forward_command_controller
  * - \b commands (std_msgs::msg::Float64MultiArray) : The commands to apply.
  */
 class MultiInterfaceForwardCommandController
-: public forward_command_controller::ForwardControllersBase
+: public ForwardControllersBase
 {
 public:
   MultiInterfaceForwardCommandController();
@@ -49,13 +49,13 @@ protected:
   void declare_parameters() override;
   controller_interface::CallbackReturn read_parameters() override;
 
-  using Params = multi_interface_forward_command_controller::Params;
-  using ParamListener = multi_interface_forward_command_controller::ParamListener;
+  using Params = multi_interface_forward_command_controller_traced::Params;
+  using ParamListener = multi_interface_forward_command_controller_traced::ParamListener;
 
   std::shared_ptr<ParamListener> param_listener_;
   Params params_;
 };
 
-}  // namespace forward_command_controller
+}  // namespace forward_command_controller_traced
 
-#endif  // FORWARD_COMMAND_CONTROLLER__MULTI_INTERFACE_FORWARD_COMMAND_CONTROLLER_HPP_
+#endif  // FORWARD_COMMAND_CONTROLLER_TRACED__MULTI_INTERFACE_FORWARD_COMMAND_CONTROLLER_HPP_

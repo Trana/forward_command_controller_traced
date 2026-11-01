@@ -21,7 +21,7 @@
 
 #include "gmock/gmock.h"
 
-#include "forward_command_controller/forward_command_controller.hpp"
+#include "forward_command_controller_traced/forward_command_controller.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
@@ -30,7 +30,8 @@ using hardware_interface::CommandInterface;
 using hardware_interface::HW_IF_POSITION;
 
 // subclassing and friending so we can access member variables
-class FriendForwardCommandController : public forward_command_controller::ForwardCommandController
+class FriendForwardCommandController
+: public forward_command_controller_traced::ForwardCommandController
 {
   FRIEND_TEST(ForwardCommandControllerTest, JointsParameterNotSet);
   FRIEND_TEST(ForwardCommandControllerTest, InterfaceParameterNotSet);

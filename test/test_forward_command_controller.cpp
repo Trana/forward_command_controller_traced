@@ -23,7 +23,7 @@
 
 #include "test_forward_command_controller.hpp"
 
-#include "forward_command_controller/forward_command_controller.hpp"
+#include "forward_command_controller_traced/forward_command_controller.hpp"
 #include "hardware_interface/loaned_command_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "lifecycle_msgs/msg/state.hpp"
@@ -223,7 +223,7 @@ TEST_F(ForwardCommandControllerTest, CommandSuccessTest)
   ASSERT_EQ(joint_3_pos_cmd_.get_optional().value(), 3.1);
 
   // send command
-  forward_command_controller::CmdType command_msg;
+  forward_command_controller_traced::CmdType command_msg;
   command_msg.data = {10.0, 20.0, 30.0};
   controller_->rt_command_.set(command_msg);
 
@@ -251,7 +251,7 @@ TEST_F(ForwardCommandControllerTest, WrongCommandCheckTest)
     controller_interface::CallbackReturn::SUCCESS);
 
   // send command with wrong number of joints
-  forward_command_controller::CmdType command_msg;
+  forward_command_controller_traced::CmdType command_msg;
   command_msg.data = {10.0, 20.0};
   controller_->rt_command_.set(command_msg);
 
@@ -415,7 +415,7 @@ TEST_F(ForwardCommandControllerTest, ActivateDeactivateCommandsResetSuccess)
   EXPECT_EQ(state_if_conf.type, controller_interface::interface_configuration_type::NONE);
 
   // send command
-  forward_command_controller::CmdType command;
+  forward_command_controller_traced::CmdType command;
   command.data = {10.0, 20.0, 30.0};
   controller_->rt_command_.set(command);
 
