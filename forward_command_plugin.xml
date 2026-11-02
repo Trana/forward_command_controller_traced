@@ -1,18 +1,19 @@
-<library path="forward_command_controller">
-  <class name="forward_command_controller_traced/ForwardCommandController" type="forward_command_controller::ForwardCommandController" base_class_type="controller_interface::ControllerInterface">
+<library path="forward_command_controller_traced">
+  <class name="forward_command_controller_traced/ExperimentalJointHoldController"
+         type="forward_command_controller_traced::ExperimentalJointHoldController"
+         base_class_type="controller_interface::ControllerInterface">
+    <description>Experimental opt-in hold-only foundation for joint-response tests.</description>
+  </class>
+  <class name="forward_command_controller_traced/ForwardCommandController" type="forward_command_controller_traced::ForwardCommandController" base_class_type="controller_interface::ControllerInterface">
   <description>
     Traced forward command controller commands a group of joints in a given interface.
   </description>
   </class>
-  <class name="forward_command_controller/ForwardCommandController" type="forward_command_controller::ForwardCommandController" base_class_type="controller_interface::ControllerInterface">
-  <description>
-    The forward command controller commands a group of joints in a given interface
-  </description>
-  </class>
-  <class name="forward_command_controller/MultiInterfaceForwardCommandController"
-         type="forward_command_controller::MultiInterfaceForwardCommandController" base_class_type="controller_interface::ControllerInterface">
+  <class name="forward_command_controller_traced/MultiInterfaceForwardCommandController"
+         type="forward_command_controller_traced::MultiInterfaceForwardCommandController" base_class_type="controller_interface::ControllerInterface">
     <description>
       MultiInterfaceForwardController ros2_control controller.
     </description>
   </class>
+  <class name="forward_command_controller_traced/SupervisedCommandController" type="forward_command_controller_traced::SupervisedCommandController" base_class_type="controller_interface::ControllerInterface"><description>Fenced streams and native diagnostic plans with one command writer.</description></class>
 </library>

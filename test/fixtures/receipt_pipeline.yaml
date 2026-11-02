@@ -1,0 +1,12 @@
+/**/controller_manager:
+  ros__parameters:
+    update_rate: 100
+    receipt_hold:
+      type: forward_command_controller_traced/ExperimentalJointHoldController
+/**/receipt_hold:
+  ros__parameters:
+    joints: [probe_joint]
+    max_handover_error: [0.05]
+    feedback_receipt_interface: feedback_receipt_monotonic_s
+    max_feedback_age_s: 0.15
+    enable_joint_test_target_telemetry: true

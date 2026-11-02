@@ -1,0 +1,27 @@
+# Synthetic limits only. Never use this profile with physical hardware.
+/**/controller_manager:
+  ros__parameters:
+    normal:
+      type: forward_command_controller_traced/ForwardCommandController
+/**/normal:
+  ros__parameters:
+    joints: [probe_joint]
+    interface_name: position
+    tracing_mode: 'off'
+/**/receipt_hold:
+  ros__parameters:
+    enable_joint_test_preparation_service: true
+    enable_joint_test_state_service: true
+    enable_experimental_joint_playback: true
+    enable_experimental_joint_start: true
+    joint_test_lease_s: 0.5
+    joint_test_max_update_gap_s: 0.1
+    joint_test_profile.enabled: true
+    joint_test_profile.id: synthetic_manager
+    joint_test_profile.lower_rad: [-1.0]
+    joint_test_profile.upper_rad: [1.0]
+    joint_test_profile.speed_rad_s: [1.0]
+    joint_test_profile.acceleration_rad_s2: [10.0]
+    joint_test_profile.max_amplitude_rad: [0.01]
+    joint_test_profile.max_total_seconds: 2.0
+    joint_test_profile.max_cycles: 2

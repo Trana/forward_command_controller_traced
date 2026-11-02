@@ -34,7 +34,8 @@ TEST(TestLoadForwardCommandController, load_controller)
 
   ASSERT_NE(
     cm.load_controller(
-      "test_forward_command_controller", "forward_command_controller/ForwardCommandController"),
+      "test_forward_command_controller",
+      "forward_command_controller_traced/ForwardCommandController"),
     nullptr);
 
   rclcpp::shutdown();

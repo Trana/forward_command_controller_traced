@@ -1,0 +1,4 @@
+/**/receipt_hold:
+  ros__parameters:
+    joint_test_profile.id: marvin-stand-simultaneous-report-only-8s-v1
+    joint_test_profile.chirp_start_hz: 0.1

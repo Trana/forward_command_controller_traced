@@ -1,0 +1,3 @@
+/**/receipt_hold:
+  ros__parameters:
+    joint_test_profile.id: marvin-stand-simultaneous-10deg-3hz-report-only-8s-v1

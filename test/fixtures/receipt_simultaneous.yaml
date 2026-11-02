@@ -1,0 +1,4 @@
+# Synthetic tests only. Does not authorize physical motion.
+/**/receipt_hold:
+  ros__parameters:
+    joint_test_profile.simultaneous_directions: [1.0]

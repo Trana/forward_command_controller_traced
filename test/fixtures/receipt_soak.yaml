@@ -1,0 +1,4 @@
+# Isolated domain 231 synthetic completion test. No physical hardware.
+/**/receipt_hold:
+  ros__parameters:
+    joint_test_profile.max_total_seconds: 30.0

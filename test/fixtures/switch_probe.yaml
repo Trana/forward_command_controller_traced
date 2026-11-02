@@ -1,0 +1,31 @@
+/**/controller_manager:
+  ros__parameters:
+    update_rate: 100
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    hold_source:
+      type: forward_command_controller_traced/ExperimentalJointHoldController
+    rejecting_hold:
+      type: forward_command_controller_traced/ExperimentalJointHoldController
+    normal:
+      type: forward_command_controller_traced/ForwardCommandController
+    test_source:
+      type: forward_command_controller_traced/ForwardCommandController
+/**/normal:
+  ros__parameters:
+    joints: [probe_joint]
+    interface_name: position
+    tracing_mode: 'off'
+/**/hold_source:
+  ros__parameters:
+    joints: [probe_joint]
+    max_handover_error: [0.05]
+/**/rejecting_hold:
+  ros__parameters:
+    joints: [probe_joint]
+    max_handover_error: [0.001]
+/**/test_source:
+  ros__parameters:
+    joints: [probe_joint]
+    interface_name: position
+    tracing_mode: 'off'
