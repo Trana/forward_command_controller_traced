@@ -1,4 +1,4 @@
-multi_interface_forward_command_controller:
+multi_interface_forward_command_controller_traced:
   joint: {
     type: string,
     default_value: "",

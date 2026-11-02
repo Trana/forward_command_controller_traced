@@ -36,6 +36,6 @@ TEST(TestLoadMultiInterfaceForwardController, load_controller)
   ASSERT_NE(
     cm.load_controller(
       "test_forward_command_controller",
-      "forward_command_controller/MultiInterfaceForwardCommandController"),
+      "forward_command_controller_traced/MultiInterfaceForwardCommandController"),
     nullptr);
 }

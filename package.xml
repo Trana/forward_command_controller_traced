@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>forward_command_controller</name>
+  <name>forward_command_controller_traced</name>
   <version>2.53.0</version>
-  <description>Generic controller for forwarding commands.</description>
+  <description>Marvin traced controller for forwarding commands without shadowing the upstream package.</description>
 
   <maintainer email="bence.magyar.robotics@gmail.com">Bence Magyar</maintainer>
   <maintainer email="denis@stoglrobotics.de">Denis Štogl</maintainer>
@@ -28,7 +28,10 @@
   <depend>rclcpp</depend>
   <depend>rclcpp_lifecycle</depend>
   <depend>realtime_tools</depend>
+  <depend>runtime_interfaces</depend>
+  <depend>sensor_msgs</depend>
   <depend>std_msgs</depend>
+  <depend>openssl</depend>
 
   <test_depend>ament_cmake_gmock</test_depend>
   <test_depend>controller_manager</test_depend>

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "forward_command_controller/forward_command_controller.hpp"
+#include "forward_command_controller_traced/forward_command_controller.hpp"
 
 #include <memory>
 #include <string>
@@ -20,7 +20,7 @@
 
 #include "rclcpp/logging.hpp"
 
-namespace forward_command_controller
+namespace forward_command_controller_traced
 {
 ForwardCommandController::ForwardCommandController() : ForwardControllersBase() {}
 
@@ -54,9 +54,10 @@ controller_interface::CallbackReturn ForwardCommandController::read_parameters()
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-}  // namespace forward_command_controller
+}  // namespace forward_command_controller_traced
 
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-  forward_command_controller::ForwardCommandController, controller_interface::ControllerInterface)
+  forward_command_controller_traced::ForwardCommandController,
+  controller_interface::ControllerInterface)

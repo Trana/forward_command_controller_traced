@@ -25,7 +25,7 @@
 
 #include "test_multi_interface_forward_command_controller.hpp"
 
-#include "forward_command_controller/multi_interface_forward_command_controller.hpp"
+#include "forward_command_controller_traced/multi_interface_forward_command_controller.hpp"
 #include "hardware_interface/loaned_command_interface.hpp"
 #include "hardware_interface/types/hardware_interface_return_values.hpp"
 #include "lifecycle_msgs/msg/state.hpp"
@@ -204,7 +204,7 @@ TEST_F(MultiInterfaceForwardCommandControllerTest, CommandSuccessTest)
   SetUpController(true);
 
   // send command
-  forward_command_controller::CmdType command;
+  forward_command_controller_traced::CmdType command;
   command.data = {10.0, 20.0, 30.0};
   controller_->rt_command_.set(command);
 
@@ -239,7 +239,7 @@ TEST_F(MultiInterfaceForwardCommandControllerTest, WrongCommandCheckTest)
   SetUpController(true);
 
   // send command with wrong number of joints
-  forward_command_controller::CmdType command;
+  forward_command_controller_traced::CmdType command;
   command.data = {10.0, 20.0};
   controller_->rt_command_.set(command);
 
@@ -299,7 +299,7 @@ TEST_F(MultiInterfaceForwardCommandControllerTest, ActivateDeactivateCommandsRes
   EXPECT_EQ(state_if_conf.type, controller_interface::interface_configuration_type::NONE);
 
   // send command
-  forward_command_controller::CmdType command;
+  forward_command_controller_traced::CmdType command;
   command.data = {10.0, 20.0, 30.0};
   controller_->rt_command_.set(command);
 

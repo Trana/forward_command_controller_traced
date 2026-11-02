@@ -23,7 +23,7 @@
 
 #include "gmock/gmock.h"
 
-#include "forward_command_controller/multi_interface_forward_command_controller.hpp"
+#include "forward_command_controller_traced/multi_interface_forward_command_controller.hpp"
 #include "hardware_interface/handle.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/executors/single_threaded_executor.hpp"
@@ -35,7 +35,7 @@ using hardware_interface::HW_IF_VELOCITY;
 
 // subclassing and friending so we can access member variables
 class FriendMultiInterfaceForwardCommandController
-: public forward_command_controller::MultiInterfaceForwardCommandController
+: public forward_command_controller_traced::MultiInterfaceForwardCommandController
 {
   FRIEND_TEST(MultiInterfaceForwardCommandControllerTest, JointsParameterNotSet);
   FRIEND_TEST(MultiInterfaceForwardCommandControllerTest, InterfaceParameterNotSet);

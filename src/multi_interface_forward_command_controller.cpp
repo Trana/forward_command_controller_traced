@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "forward_command_controller/multi_interface_forward_command_controller.hpp"
+#include "forward_command_controller_traced/multi_interface_forward_command_controller.hpp"
 
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace forward_command_controller
+namespace forward_command_controller_traced
 {
 MultiInterfaceForwardCommandController::MultiInterfaceForwardCommandController()
 : ForwardControllersBase()
@@ -54,10 +54,10 @@ controller_interface::CallbackReturn MultiInterfaceForwardCommandController::rea
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-}  // namespace forward_command_controller
+}  // namespace forward_command_controller_traced
 
 #include "pluginlib/class_list_macros.hpp"
 
 PLUGINLIB_EXPORT_CLASS(
-  forward_command_controller::MultiInterfaceForwardCommandController,
+  forward_command_controller_traced::MultiInterfaceForwardCommandController,
   controller_interface::ControllerInterface)
